@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SERVICI — Low-Fidelity Mobile Prototype</title>
+<style>
+:root{--ink:#171717;--muted:#666;--line:#bdbdbd;--paper:#fff;--soft:#f2f2f2;--dark:#222}
+*{box-sizing:border-box}body{margin:0;background:#e9e9e9;color:var(--ink);font:15px/1.45 Arial,Helvetica,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.prototype{max-width:1180px;margin:0 auto;padding:24px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}
+.brand{font-size:25px;font-weight:900;letter-spacing:2px}.brand span{font-size:11px;display:block;letter-spacing:1px;font-weight:400;color:#555}
+.role-switch{display:flex;flex-wrap:wrap;gap:7px}
+.role-switch button,.outline-btn{background:#fff;border:1px solid #333;padding:9px 12px;border-radius:4px}
+.role-switch button.active,.primary{background:#222!important;color:#fff!important}
+.intro{background:#fff;border:1px solid #aaa;padding:14px 16px;margin-bottom:20px}
+.intro strong{display:block;margin-bottom:4px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start}
+.sidebar{background:#fff;border:1px solid #aaa;padding:14px;position:sticky;top:12px}
+.sidebar h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#666;margin:0 0 10px}
+.nav{display:grid;gap:5px}.nav button{text-align:left;border:0;background:transparent;padding:9px;border-radius:3px;color:#333}.nav button.active,.nav button:hover{background:#e9e9e9;font-weight:bold}
+.device-wrap{display:flex;justify-content:center}
+.device{position:relative;width:390px;max-width:100%;min-height:790px;background:var(--paper);border:2px solid #222;border-radius:28px;overflow:hidden;box-shadow:0 8px 24px #0001}
+.status{height:28px;padding:5px 18px;display:flex;justify-content:space-between;font-size:11px;border-bottom:1px solid #ddd}
+.app-head{padding:13px 17px;border-bottom:1px solid #bbb;display:flex;justify-content:space-between;align-items:center}
+.app-head .brand{font-size:19px}.avatar{width:32px;height:32px;border:1px solid #222;border-radius:50%;display:grid;place-items:center;font-size:11px}
+.screen{padding:17px 16px 92px;min-height:690px}
+h1{font-size:23px;line-height:1.2;margin:0 0 7px}h2{font-size:17px;margin:20px 0 10px}h3{font-size:14px;margin:0 0 7px}
+.muted{color:var(--muted);font-size:13px}.eyebrow{text-transform:uppercase;letter-spacing:1.2px;font-size:10px;color:#666;font-weight:bold}
+.search{width:100%;padding:11px;border:1px solid #888;background:#fafafa;border-radius:4px;margin:14px 0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.card{border:1px solid #aaa;padding:12px;margin:9px 0;background:#fff;border-radius:4px}
+.card.soft{background:#f5f5f5}.category{border:1px dashed #888;padding:10px;text-align:center;font-size:12px;background:#fafafa}
+.pill{display:inline-block;border:1px solid #999;border-radius:20px;padding:3px 8px;font-size:10px;margin:3px 3px 0 0}
+.btn{border:1px solid #222;background:#fff;padding:10px 12px;border-radius:3px;font-weight:bold;font-size:12px}
+.btn.primary{background:#222;color:#fff}.btn.full{width:100%;margin-top:8px}
+.btn.small{padding:7px 9px;font-size:11px}
+.field{margin:11px 0}.field label{display:block;font-size:12px;font-weight:bold;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;border:1px solid #999;padding:10px;background:#fff;border-radius:3px}.field textarea{min-height:75px;resize:vertical}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{border:1px solid #aaa;padding:12px;background:#f8f8f8}.stat b{font-size:22px;display:block}.stat span{font-size:11px;color:#555}
+.bottomnav{position:sticky;bottom:0;margin-top:-75px;background:#fff;border-top:1px solid #aaa;display:flex;justify-content:space-around;padding:10px 3px 13px}
+.bottomnav button{border:0;background:none;font-size:10px;color:#444;display:grid;justify-items:center;gap:3px}.bottomnav button.active{font-weight:bold;color:#000}.navicon{font-size:17px}
+.listline{border-bottom:1px solid #ddd;padding:10px 0}.listline:last-child{border:0}
+.tagrow{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.notice{padding:10px;border:1px dashed #777;background:#f6f6f6;font-size:12px;margin:10px 0}
+.admin .device{width:390px}
+.hidden{display:none!important}
+/* Right-side navigation drawer, matching the reference portfolio menu */
+.menu-toggle{width:34px;height:32px;border:1px solid #777;border-radius:3px;background:#fff;font-size:19px;line-height:1}
+.drawer-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.34);z-index:20;opacity:0;visibility:hidden;transition:opacity .25s ease,visibility .25s ease}
+.drawer-backdrop.open{opacity:1;visibility:visible}
+.app-drawer{position:absolute;z-index:30;top:0;right:0;width:78%;height:100%;overflow-y:auto;background:#fff;border-left:1px solid #aaa;box-shadow:-8px 0 24px rgba(0,0,0,.16);padding:18px 15px;transform:translateX(105%);transition:transform .28s ease;}
+.app-drawer.open{transform:translateX(0)}
+.drawer-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0 18px;border-bottom:1px solid #ddd;margin-bottom:12px;font-size:14px}
+.drawer-close{width:30px;height:30px;border:1px solid #777;background:#fff;border-radius:50%;font-size:20px;line-height:1}
+.drawer-link{display:block;width:100%;padding:13px 10px;text-align:left;border:0;border-radius:4px;background:transparent;color:#222;font-size:14px}
+.drawer-link:hover,.drawer-link.active{background:#eee;font-weight:bold}
+.drawer-link span{color:#777}
+
+@media(max-width:760px){.prototype{padding:12px}.topbar{align-items:flex-start;flex-direction:column}.workspace{grid-template-columns:1fr}.device{min-height:760px}.intro{font-size:13px}}
+@media(min-width:761px){.device{min-height:820px}}
+</style>
+</head>
+<body>
+<div class="prototype">
+  <div class="topbar">
+    <div class="brand">SERVICI <span>LOW-FIDELITY MOBILE PROTOTYPE</span></div>
+    <div class="role-switch" aria-label="Choose user role">
+      <button class="active" data-role="seeker">Service Seeker</button>
+      <button data-role="provider">Service Provider</button>
+      <button data-role="admin">Administrator</button>
+    </div>
+  </div>
+  <div class="intro">
+    <strong>Interactive wireframe — click through the screens</strong>
+    Black-and-white structure-first prototype based on the SERVICI concept: connect people who need everyday services with people looking for flexible paid jobs in Tunisia. Use the role buttons to switch between the three user journeys.
+  </div>
+  <div class="workspace">
+    <main class="device-wrap">
+      <div class="device">
+        <div class="status"><span>9:41</span><span>● ● ●  ▰</span></div>
+        <div class="app-head">
+          <button class="menu-toggle" id="menuToggle" aria-label="Open navigation menu" aria-expanded="false" onclick="toggleDrawer()">☰</button>
+          <div class="brand">SERVICI</div>
+          <div class="avatar" id="avatar">AM</div>
+        </div>
+        <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+        <nav class="app-drawer" id="appDrawer" aria-label="Application navigation">
+          <div class="drawer-heading"><b id="drawerTitle">Menu</b><button class="drawer-close" id="drawerClose" type="button" aria-label="Close menu">×</button></div>
+          <div id="drawerNav"></div>
+        </nav>
+        <div class="screen" id="screen"></div>
+        <div class="bottomnav" id="bottomNav"></div>
+      </div>
+    </main>
+  </div>
+</div>
+<script>
+const journeys = {
+seeker:{
+title:"Service seeker journey", avatar:"SK",
+screens:[
+["Home","home"],["Search services","search"],["Publish a task","publish"],["Applications","applications"],["Messages","messages"],["Booking & payment","booking"],["Reviews","reviews"],["My profile","profile"]
+]},
+provider:{
+title:"Service provider journey",avatar:"PR",
+screens:[
+["Home","home"],["Find tasks","find"],["Task details","details"],["Apply / proposal","apply"],["My applications","applications"],["Messages","messages"],["My earnings","earnings"],["My profile","profile"]
+]},
+admin:{
+title:"Administrator journey",avatar:"AD",
+screens:[
+["Dashboard","dashboard"],["Manage users","users"],["Verify accounts","verify"],["Categories","categories"],["Monitor tasks","tasks"],["Reports & complaints","reports"],["Security","security"]
+]}
+};
+let role="seeker", current="home";
+const $=s=>document.querySelector(s);
+function btn(label,action,primary=false,small=false){return `<button class="btn ${primary?'primary':''} ${small?'small':''}" onclick="${action}">${label}</button>`}
+function field(label,placeholder="",type="text"){return `<div class="field"><label>${label}</label><input type="${type}" placeholder="${placeholder}"></div>`}
+function card(title,desc,meta="",actions=""){return `<div class="card"><div class="row"><h3>${title}</h3><span class="pill">${meta||"Available"}</span></div><div class="muted">${desc}</div>${actions?`<div class="row" style="margin-top:10px">${actions}</div>`:""}</div>`}
+function setScreen(id){current=id;render()}
+function render(){
+ const journey=journeys[role]; $("#avatar").textContent=journey.avatar;
+ $("#drawerTitle").textContent=journey.title;
+ $("#drawerNav").innerHTML=journey.screens.map(([label,id])=>`<button class="drawer-link ${current===id?'active':''}" onclick="setScreen('${id}');closeDrawer()">${label} <span style="float:right">›</span></button>`).join("");
+ const commonBottom=journey.screens.slice(0,4);
+ $("#bottomNav").innerHTML=commonBottom.map(([label,id],i)=>`<button class="${current===id?'active':''}" onclick="setScreen('${id}')"><span class="navicon">${["⌂","⌕","＋","▤"][i]}</span>${label.split(" ")[0]}</button>`).join("");
+ $("#screen").innerHTML=role==="seeker"?seeker(current):role==="provider"?provider(current):admin(current);
+ document.querySelectorAll(".role-switch button").forEach(b=>b.classList.toggle("active",b.dataset.role===role));
+}
+function seeker(s){
+switch(s){
+case "home":return `<div class="eyebrow">Welcome back</div><h1>Find the help you need.</h1><p class="muted">Everyday services, provided by people near you.</p><input class="search" placeholder="Search cleaning, tutoring, delivery... " onclick="setScreen('search')"><div class="row"><h2>Service categories</h2><span class="muted">View all</span></div><div class="grid2">${["Cleaning","Babysitting","Tutoring","Delivery","Graphic design","Web development"].map(x=>`<div class="category" onclick="setScreen('search')">□<br>${x}</div>`).join("")}</div><h2>Recommended near you</h2>${card("Math tutor","One-to-one tutoring for secondary school students.","Tunis",btn("View details","setScreen('search')"))}${card("Home cleaning","Flexible cleaning service.","Manouba",btn("Explore","setScreen('search')"))}`;
+case "search":return `<div class="eyebrow">Explore services</div><h1>Search services</h1><input class="search" placeholder="What service do you need?"><div class="grid2"><div class="field"><label>Category</label><select><option>All categories</option><option>Cleaning</option><option>Tutoring</option><option>Delivery</option><option>Design</option></select></div><div class="field"><label>Location</label><input placeholder="City / area"></div><div class="field"><label>Budget</label><input placeholder="Maximum budget"></div><div class="field"><label>Date</label><input type="date"></div></div>${btn("Apply filters","document.getElementById('results').classList.remove('hidden')",true,true)}<h2>Results</h2><div id="results">${card("English tutor","English lessons for beginners.","Tunis",btn("View","setScreen('publish')"))}${card("Graphic designer","Logo and social media design.","Ariana",btn("View","setScreen('publish')"))}</div>`;
+case "publish":return `<div class="eyebrow">Create a request</div><h1>Publish a task</h1><p class="muted">Describe what you need. Providers can send you proposals.</p>${field("Task title","e.g. Help me move furniture")}<div class="field"><label>Category</label><select><option>Select a category</option><option>Cleaning</option><option>Tutoring</option><option>Delivery</option><option>Graphic design</option><option>Web development</option></select></div><div class="field"><label>Description</label><textarea placeholder="Explain the service you need..."></textarea></div>${field("Location","City / neighbourhood")}${field("Budget (TND)","e.g. 40","number")}${field("Preferred date","", "date")}${field("Deadline","", "date")}${btn("Publish request","alert('Prototype: your task request has been published.');setScreen('applications')",true)}<p class="muted">You can edit or cancel your request later.</p>`;
+case "applications":return `<div class="eyebrow">Your task requests</div><h1>Applications</h1><p class="muted">Review proposals from interested service providers.</p>${card("Move furniture","3 proposals received · Budget: 50 TND","Pending",btn("Review proposals","alert('Prototype: opening provider proposals.')",true,true))}${card("Math tutoring","1 proposal received · Budget: 25 TND","New",btn("Review","alert('Prototype: opening provider proposal.')",false,true))}<h2>Proposal example</h2><div class="card"><div class="row"><b>Amine B.</b><span class="pill">4.8 ★</span></div><p class="muted">I can complete this task on Saturday. I have relevant experience.</p><b>Proposed price: 45 TND</b><div class="row" style="margin-top:10px">${btn("Accept","alert('Prototype: proposal accepted.')",true,true)}${btn("Reject","alert('Prototype: proposal rejected.')",false,true)}</div></div>`;
+case "messages":return `<div class="eyebrow">Communication</div><h1>Messages</h1><p class="muted">Discuss task details and agree on the service.</p>${["Amine B. — Move furniture","Sarra M. — Math tutoring","Youssef K. — Graphic design"].map(x=>`<div class="listline" onclick="alert('Prototype: opening conversation with ${x.split(' — ')[0]}')"><b>${x}</b><div class="muted">Tap to open conversation →</div></div>`).join("")}<h2>Conversation preview</h2><div class="card soft"><p><b>Provider:</b> Hello! Is Saturday morning suitable?</p><p><b>You:</b> Yes, around 10:00.</p><input class="search" placeholder="Write a message...">${btn("Send message","alert('Prototype: message sent.')",true,true)}</div>`;
+case "booking":return `<div class="eyebrow">Your bookings</div><h1>Booking & payment</h1>${card("Home cleaning","Provider: Sarra M. · 15 Nov, 10:00","Confirmed",btn("View booking","alert('Prototype: booking details opened.')",true,true))}<div class="card"><h3>Booking details</h3><div class="listline">Agreed price <b style="float:right">40 TND</b></div><div class="listline">Status <b style="float:right">Upcoming</b></div><div class="listline">Payment <b style="float:right">Pending</b></div><p class="muted">Payment processing depends on available payment providers.</p>${btn("Confirm task completion","alert('Prototype: completion confirmation recorded.')",true)}</div>`;
+case "reviews":return `<div class="eyebrow">Feedback</div><h1>Ratings & reviews</h1><p class="muted">Share your experience after a completed task.</p><div class="card"><h3>Rate your service</h3><p>Home cleaning · Sarra M.</p><div class="field"><label>Your rating</label><select><option>★★★★★ — Excellent</option><option>★★★★ — Very good</option><option>★★★ — Good</option><option>★★ — Fair</option><option>★ — Poor</option></select></div><div class="field"><label>Comment</label><textarea placeholder="Write feedback..."></textarea></div>${btn("Submit review","alert('Prototype: review submitted. Thank you!')",true)}</div>`;
+case "profile":return `<div class="eyebrow">Account</div><h1>My profile</h1><div class="card"><div class="row"><div class="avatar">SK</div><div style="flex:1"><b>Service Seeker</b><div class="muted">Tunis, Tunisia</div></div>${btn("Edit","alert('Prototype: edit profile.')",false,true)}</div></div>${field("Full name","Your name")}${field("Email","name@example.com","email")}${field("Phone number","+216")}${field("Location","City / area")}${btn("Save changes","alert('Prototype: profile saved.')",true)}<p class="muted">Your profile and activity history are managed here.</p>`;
+}return "";
+}
+function provider(s){
+switch(s){
+case "home":return `<div class="eyebrow">Provider workspace</div><h1>Find work that fits you.</h1><p class="muted">Choose tasks that match your skills and availability.</p><div class="statgrid"><div class="stat"><b>05</b><span>New opportunities</span></div><div class="stat"><b>03</b><span>Active applications</span></div></div><h2>Recommended tasks</h2>${card("Create a small business logo","Graphic design · Tunis · Budget 60 TND","New",btn("View task","setScreen('details')",true,true))}${card("Help with mathematics","Tutoring · Manouba · Budget 25 TND","Nearby",btn("View task","setScreen('details')",false,true))}`;
+case "find":return `<div class="eyebrow">Opportunities</div><h1>Find tasks</h1><input class="search" placeholder="Search by keyword"><div class="grid2"><div class="field"><label>Category</label><select><option>All</option><option>Cleaning</option><option>Tutoring</option><option>Delivery</option><option>Design</option></select></div><div class="field"><label>Location</label><input placeholder="Nearby"></div></div><div class="tagrow"><span class="pill">Newest</span><span class="pill">Closest</span><span class="pill">Highest budget</span></div>${card("Design a logo","Create a logo for a local shop.","60 TND",btn("Details","setScreen('details')",true,true))}${card("Deliver a package","Small delivery within the city.","15 TND",btn("Details","setScreen('details')",false,true))}${card("Help a student with maths","Two tutoring sessions.","25 TND",btn("Details","setScreen('details')",false,true))}`;
+case "details":return `<div class="eyebrow">Task details</div><h1>Create a small business logo</h1><div class="tagrow"><span class="pill">Graphic design</span><span class="pill">Tunis</span><span class="pill">New</span></div><div class="card"><h3>Description</h3><p class="muted">A local business needs a simple and memorable logo for its new shop. The client would like two initial concepts and one revision.</p><div class="listline">Budget <b style="float:right">60 TND</b></div><div class="listline">Preferred date <b style="float:right">20 November</b></div><div class="listline">Location <b style="float:right">Tunis</b></div></div><h2>About the requester</h2><div class="card"><b>Service Seeker</b><p class="muted">Profile available · Account information</p></div>${btn("Apply for this task","setScreen('apply')",true)}${btn("Message requester","setScreen('messages')")}`;
+case "apply":return `<div class="eyebrow">Send a proposal</div><h1>Apply for task</h1><div class="notice">Task: Create a small business logo · Budget: 60 TND</div>${field("Your proposed price (TND)","e.g. 55","number")}<div class="field"><label>Message to the requester</label><textarea placeholder="Introduce yourself and explain why you are suitable..."></textarea></div>${field("Availability","e.g. Weekends")}${btn("Send proposal","alert('Prototype: your proposal has been sent.');setScreen('applications')",true)}<p class="muted">You can track the status of your application.</p>`;
+case "applications":return `<div class="eyebrow">Activity</div><h1>My applications</h1>${card("Create a small business logo","Sent proposal: 55 TND","Under review",btn("View status","alert('Prototype: application is under review.')",false,true))}${card("Math tutoring","Sent proposal: 25 TND","Accepted",btn("View booking","setScreen('messages')",true,true))}${card("Package delivery","Sent proposal: 15 TND","Rejected",btn("Details","setScreen('find')",false,true))}`;
+case "messages":return `<div class="eyebrow">Communication</div><h1>Messages</h1>${["Client — Logo design","Student — Tutoring"].map(x=>`<div class="listline"><b>${x}</b><div class="muted">Tap to open conversation →</div></div>`).join("")}<div class="card soft"><p><b>Client:</b> Can you share examples of your work?</p><p><b>You:</b> Yes, I can share my portfolio.</p><input class="search" placeholder="Write a message...">${btn("Send","alert('Prototype: message sent.')",true,true)}</div>`;
+case "earnings":return `<div class="eyebrow">Income overview</div><h1>My earnings</h1><div class="statgrid"><div class="stat"><b>180</b><span>Total earned (TND)</span></div><div class="stat"><b>40</b><span>Pending (TND)</span></div></div><h2>Payment history</h2>${["Logo design — 100 TND — Completed","Tutoring — 80 TND — Completed","Delivery — 40 TND — Pending"].map(x=>`<div class="listline">${x}</div>`).join("")}<p class="muted">Earnings and payment status are displayed for completed tasks.</p>`;
+case "profile":return `<div class="eyebrow">Provider account</div><h1>My profile</h1><div class="card"><b>Service Provider</b><div class="muted">Tunis, Tunisia · Profile completion 80%</div></div>${field("Full name","Your name")}${field("Skills","e.g. Graphic design, tutoring")}${field("Experience","Describe your experience")}<div class="field"><label>Availability</label><select><option>Available now</option><option>Weekdays</option><option>Weekends</option><option>Not available</option></select></div>${field("Location","City / area")}${btn("Save profile","alert('Prototype: profile saved.')",true)}`;
+}return "";
+}
+function admin(s){
+switch(s){
+case "dashboard":return `<div class="eyebrow">Administration</div><h1>Dashboard</h1><p class="muted">Overview of SERVICI platform activity.</p><div class="statgrid"><div class="stat"><b>248</b><span>Registered users</span></div><div class="stat"><b>86</b><span>Active tasks</span></div><div class="stat"><b>19</b><span>Pending verifications</span></div><div class="stat"><b>07</b><span>Open reports</span></div></div><h2>Recent activity</h2>${["New provider registration","Task request published","A user submitted a complaint"].map(x=>`<div class="listline">${x}<div class="muted">Today</div></div>`).join("")}`;
+case "users":return `<div class="eyebrow">Platform management</div><h1>Manage users</h1><input class="search" placeholder="Search by name or email"><div class="tagrow"><span class="pill">All</span><span class="pill">Seekers</span><span class="pill">Providers</span><span class="pill">Suspended</span></div>${["Amina K. — Provider","Yassine B. — Seeker","Sarra M. — Provider"].map(x=>`<div class="card"><b>${x}</b><p class="muted">Account status: Active</p><div class="row">${btn("View","alert('Prototype: user details.')",false,true)}${btn("Suspend","alert('Prototype: account action.')",false,true)}</div></div>`).join("")}`;
+case "verify":return `<div class="eyebrow">Trust & safety</div><h1>Verify accounts</h1><p class="muted">Review profile information and verification requests.</p>${["Amine B. — Identity review","Sarra M. — Profile review","Youssef K. — Pending"].map(x=>`<div class="card"><b>${x}</b><p class="muted">Submitted information awaiting review.</p><div class="row">${btn("Approve","alert('Prototype: account approved.')",true,true)}${btn("Request info","alert('Prototype: more information requested.')",false,true)}</div></div>`).join("")}`;
+case "categories":return `<div class="eyebrow">Content management</div><h1>Service categories</h1>${["Cleaning","Babysitting","Tutoring","Delivery","Graphic design","Web development"].map(x=>`<div class="listline row"><b>${x}</b>${btn("Edit","alert('Prototype: category edit.')",false,true)}</div>`).join("")}<h2>Add category</h2>${field("Category name","New category")}${btn("Add category","alert('Prototype: category added.')",true)}`;
+case "tasks":return `<div class="eyebrow">Marketplace monitoring</div><h1>Monitor tasks</h1><input class="search" placeholder="Search task"><div class="tagrow"><span class="pill">All</span><span class="pill">Published</span><span class="pill">Reported</span><span class="pill">Completed</span></div>${card("Logo design request","Published by a service seeker · Tunis","Published",btn("Review","alert('Prototype: task reviewed.')",false,true))}${card("Delivery request","Flagged for review · Ariana","Reported",btn("Moderate","alert('Prototype: moderation actions.')",true,true))}`;
+case "reports":return `<div class="eyebrow">Community support</div><h1>Reports & complaints</h1>${["Inappropriate message — Report #104","Suspicious task — Report #103","Payment disagreement — Report #102"].map(x=>`<div class="card"><b>${x}</b><p class="muted">Status: Open · Submitted by a platform user</p><div class="row">${btn("Investigate","alert('Prototype: report details opened.')",true,true)}${btn("Resolve","alert('Prototype: report marked resolved.')",false,true)}</div></div>`).join("")}`;
+case "security":return `<div class="eyebrow">Platform protection</div><h1>Security</h1><div class="card"><h3>Security overview</h3><div class="listline">Verified accounts <b style="float:right">Enabled</b></div><div class="listline">Content moderation <b style="float:right">Active</b></div><div class="listline">Report handling <b style="float:right">Active</b></div></div><h2>Recent alerts</h2>${["Unusual login activity","User account reported","Task flagged for review"].map(x=>`<div class="listline">${x}<span class="pill">Review</span></div>`).join("")}<div class="notice">Administrator actions should be recorded to support accountability and platform security.</div>`;
+}return "";
+}
+function toggleDrawer(){
+ const drawer=$("#appDrawer"), backdrop=$("#drawerBackdrop"), toggle=$("#menuToggle");
+ const open=!drawer.classList.contains("open");
+ drawer.classList.toggle("open",open); backdrop.classList.toggle("open",open);
+ toggle.setAttribute("aria-expanded",String(open));
+}
+function closeDrawer(){
+ $("#appDrawer").classList.remove("open");
+ $("#drawerBackdrop").classList.remove("open");
+ $("#menuToggle").setAttribute("aria-expanded","false");
+}
+$("#drawerClose").addEventListener("click", closeDrawer);
+document.addEventListener("keydown", event => {
+ if(event.key === "Escape") closeDrawer();
+});
+document.querySelectorAll(".role-switch button").forEach(b=>b.addEventListener("click",()=>{role=b.dataset.role;current=journeys[role].screens[0][1];closeDrawer();render()}));
+render();
+</script>
+</body>
+</html>
